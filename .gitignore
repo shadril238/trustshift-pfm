@@ -1,0 +1,22 @@
+# Never commit credentials
+.env
+*.token
+kaggle.json
+
+# Cached embeddings and model weights are too large for git
+*.npz
+*.npy
+*.pth
+*.bin
+*.safetensors
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
