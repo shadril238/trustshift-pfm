@@ -17,18 +17,21 @@
 ![Framework](https://img.shields.io/badge/framework-PyTorch-ee4c2c?logo=pytorch&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-0969da)
 
-[**Paper**](#paper) · [**Method**](#method) · [**Results**](#results-from-the-paper) · [**Code**](#code-and-setup) · [**Reproduce**](#reproducing-the-paper) · [**Citation**](#citation)
+[**Official paper**](https://papers.miccai.org/miccai-2026-sat/MI4MedFM_010.html) · [**PDF**](https://papers.miccai.org/miccai-2026-sat/paper/MI4MedFM_010.pdf) · [**Method**](#method) · [**Results**](#results-from-the-paper) · [**Code**](#code-and-setup) · [**Reproduce**](#reproducing-the-paper) · [**BibTeX**](#citation)
 
 </div>
 
-> **TL;DR:** Output-space and representation-space uncertainty capture different failure modes. Under stain shift, classifier reliability deteriorates while embedding geometry clearly moves; under organ shift, geometry changes little; and in open-set detection, the stronger signal depends on the unseen class.
+<blockquote>
+<p align="justify"><strong>TL;DR:</strong> Output-space and representation-space uncertainty capture different failure modes. Under stain shift, classifier reliability deteriorates while embedding geometry clearly moves; under organ shift, geometry changes little; and in open-set detection, the stronger signal depends on the unseen class.</p>
+</blockquote>
 
 ## Paper
 
 |  |  |
 |---|---|
 | **Venue** | Mechanistic Interpretability for Medical Foundation Models (MI4MedFM), MICCAI 2026 Workshops |
-| **Status** | Camera-ready; proceedings URL forthcoming |
+| **Official paper page** | [MICCAI 2026 Open Access](https://papers.miccai.org/miccai-2026-sat/MI4MedFM_010.html) |
+| **Open-access PDF** | [Download paper](https://papers.miccai.org/miccai-2026-sat/paper/MI4MedFM_010.pdf) |
 | **Official code** | [shadril238/trustshift-pfm](https://github.com/shadril238/trustshift-pfm) |
 | **Foundation model** | [CONCH](https://github.com/mahmoodlab/CONCH), frozen throughout |
 | **Tasks** | Nucleus classification, uncertainty estimation, distribution-shift analysis, open-set detection |
@@ -36,9 +39,7 @@
 
 ## Abstract
 
-Reliable uncertainty estimation is essential for deploying pathology foundation models, but different reliability measurements need not behave consistently under distribution shift. We study a frozen CONCH encoder with a lightweight linear probe on the PanNuke and MoNuSAC nucleus-classification benchmarks. Output-space measurements - maximum softmax probability, energy, and calibration error - are compared with representation-space measurements - Mahalanobis distance and k-nearest-neighbour label disagreement - under controlled appearance, semantic, and open-set shifts.
-
-The results show a shift-dependent asymmetry. Appearance shift can severely damage confidence and calibration while producing a clear displacement in representation space. Semantic shift degrades output-space reliability more mildly but leaves representation geometry largely unchanged. In open-set evaluation, the stronger reliability family changes with the held-out class. No single measurement is universally reliable; practical monitoring should consider both classifier outputs and representation geometry.
+<p align="justify">Reliable uncertainty estimation is essential for deploying pathology foundation models, yet the behaviour of different reliability measurements under distinct forms of distribution shift remains poorly understood. We investigate this problem using a frozen CONCH pathology foundation model with a lightweight linear probe on the PanNuke and MoNuSAC nucleus classification benchmarks. We compare output-space reliability measurements with representation-space measurements under controlled appearance, semantic, and open-set distribution shifts. Our experiments reveal a shift-dependent asymmetry between the two reliability families. Appearance shift severely degrades confidence and calibration while representation geometry remains informative, whereas semantic shift degrades confidence more mildly and leaves representation geometry largely unchanged. Open-set experiments further show that neither reliability family consistently dominates across unseen classes. These findings demonstrate that no single reliability measurement remains universally reliable and motivate jointly monitoring classifier outputs and representation geometry for more trustworthy deployment of pathology foundation models. To support reproducibility, we publicly release the experimental code in the GitHub repository.</p>
 
 ## At a glance
 
@@ -58,14 +59,14 @@ The results show a shift-dependent asymmetry. Appearance shift can severely dama
   <img src="assets/pipeline.png" width="95%" alt="Experimental pipeline for output-space and representation-space reliability evaluation">
 </p>
 
-Each annotated nucleus is converted into a mask-centred `64 x 64` crop and encoded by the frozen CONCH feature extractor. Baseline embeddings are cached; appearance-shift variants are re-embedded after perturbation. A multinomial logistic-regression probe is trained on standardized 512-dimensional embeddings with L2 regularization and balanced class weights. The CONCH backbone is never fine-tuned.
+<p align="justify">Each annotated nucleus is converted into a mask-centred <code>64 x 64</code> crop and encoded by the frozen CONCH feature extractor. Baseline embeddings are cached; appearance-shift variants are re-embedded after perturbation. A multinomial logistic-regression probe is trained on standardized 512-dimensional embeddings with L2 regularization and balanced class weights. The CONCH backbone is never fine-tuned.</p>
 
-The study evaluates two complementary reliability families:
+<p align="justify">The study evaluates two complementary reliability families:</p>
 
 - **Output space:** maximum softmax probability (MSP), energy score, expected calibration error (ECE), and confidence-based selective prediction.
 - **Representation space:** shared-covariance Mahalanobis distance with Ledoit-Wolf shrinkage and k-NN label disagreement with `k=20`.
 
-Three shift settings are considered:
+<p align="justify">Three shift settings are considered:</p>
 
 - **Appearance shift:** HED stain perturbation at `sigma = {0.05, 0.10, 0.20, 0.35}`.
 - **Semantic shift:** unseen organs or tissues are excluded from training and representation-statistics estimation, then used only for evaluation.
@@ -91,7 +92,7 @@ Three shift settings are considered:
 
 ### Shift-dependent asymmetry
 
-PanNuke demonstrates the central result. Stain perturbation strongly displaces the embeddings while calibration and accuracy deteriorate. Under organ shift, balanced accuracy still falls substantially, but the change in Mahalanobis distance is comparatively small.
+<p align="justify">PanNuke demonstrates the central result. Stain perturbation strongly displaces the embeddings while calibration and accuracy deteriorate. Under organ shift, balanced accuracy still falls substantially, but the change in Mahalanobis distance is comparatively small.</p>
 
 | Condition | Balanced accuracy | ECE | Mean Mahalanobis distance |
 |---|---:|---:|---:|
@@ -102,11 +103,11 @@ PanNuke demonstrates the central result. Stain perturbation strongly displaces t
 | Stain, `sigma=0.35` | 0.228 (0.004) | 0.503 (0.005) | 3,606 (11) |
 | Held-out tissues | 0.449 (0.020) | 0.118 (0.039) | 390 (56) |
 
-Values in parentheses are standard deviations over five stain seeds or five held-out-tissue draws. The mildest stain condition retains higher balanced accuracy than the held-out-tissue condition, so the contrast is not explained only by the strongest corruption being more severe.
+<p align="justify">Values in parentheses are standard deviations over five stain seeds or five held-out-tissue draws. The mildest stain condition retains higher balanced accuracy than the held-out-tissue condition, so the contrast is not explained only by the strongest corruption being more severe.</p>
 
 ### Open-set detection
 
-AUROC under leave-one-class-out evaluation confirms that output and representation signals are complementary. Bold values mark the strongest signal for each held-out class.
+<p align="justify">AUROC under leave-one-class-out evaluation confirms that output and representation signals are complementary. Bold values mark the strongest signal for each held-out class.</p>
 
 | Dataset | Held-out class | MSP | Energy | Mahalanobis |
 |---|---|---:|---:|---:|
@@ -120,7 +121,7 @@ AUROC under leave-one-class-out evaluation confirms that output and representati
 | MoNuSAC | Macrophage | 0.574 | 0.602 | **0.891** |
 | MoNuSAC | Neutrophil | 0.640 | 0.721 | **0.806** |
 
-The winner changes both across and within datasets. In particular, energy is below chance for the held-out PanNuke `Dead` class while Mahalanobis distance reaches 0.933 AUROC. Conversely, output-space scores lead for several abundant classes.
+<p align="justify">The winner changes both across and within datasets. In particular, energy is below chance for the held-out PanNuke <code>Dead</code> class while Mahalanobis distance reaches 0.933 AUROC. Conversely, output-space scores lead for several abundant classes.</p>
 
 ## Datasets
 
@@ -129,9 +130,9 @@ The winner changes both across and within datasets. In particular, energy is bel
 | [PanNuke](https://arxiv.org/abs/2003.10778) | Part 1, 2,656 images | 19 | 5 | 51,365 | 31,187 / 7,495 / 12,683 |
 | [MoNuSAC](https://monusac-2020.grand-challenge.org/) | Train and test splits | 4 | 4 | 46,686 | 27,416 / 7,822 / 11,448 |
 
-All partitions are grouped by source image to prevent nucleus-level leakage. The datasets are strongly imbalanced: `Dead` contributes 790 PanNuke nuclei, while `Macrophage` and `Neutrophil` contribute 893 and 791 MoNuSAC nuclei, respectively.
+<p align="justify">All partitions are grouped by source image to prevent nucleus-level leakage. The datasets are strongly imbalanced: <code>Dead</code> contributes 790 PanNuke nuclei, while <code>Macrophage</code> and <code>Neutrophil</code> contribute 893 and 791 MoNuSAC nuclei, respectively.</p>
 
-For semantic shift, the protocols differ by dataset:
+<p align="justify">For semantic shift, the protocols differ by dataset:</p>
 
 - **PanNuke:** six of nineteen tissues are held out at random; results are averaged over five draws. This is a multi-tissue holdout, not leave-one-organ-out.
 - **MoNuSAC:** strict leave-one-organ-out over Breast, Kidney, Lung, and Prostate. `Macrophage` and `Neutrophil` are merged into `Other`, producing a three-class problem whose values are not directly comparable with the four-class baseline.
@@ -155,14 +156,14 @@ trustshift-pfm/
 
 ### Installation
 
-The notebooks were developed on Kaggle with an NVIDIA T4 GPU. A typical environment requires:
+<p align="justify">The notebooks were developed on Kaggle with an NVIDIA T4 GPU. A typical environment requires:</p>
 
 ```bash
 pip install torch timm transformers==4.40.0 scikit-learn numpy Pillow scikit-image datasets matplotlib tqdm
 pip install "git+https://github.com/mahmoodlab/CONCH.git"
 ```
 
-CONCH is gated. Request access through the [CONCH model page](https://huggingface.co/MahmoodLab/CONCH), then add the token to Kaggle Secrets as `HF_TOKEN`:
+<p align="justify">CONCH is gated. Request access through the <a href="https://huggingface.co/MahmoodLab/CONCH">CONCH model page</a>, then add the token to Kaggle Secrets as <code>HF_TOKEN</code>:</p>
 
 ```python
 from kaggle_secrets import UserSecretsClient
@@ -170,11 +171,11 @@ from kaggle_secrets import UserSecretsClient
 token = UserSecretsClient().get_secret("HF_TOKEN")
 ```
 
-No Hugging Face token, model weights, source images, or cached embeddings are stored in this repository.
+<p align="justify">No Hugging Face token, model weights, source images, or cached embeddings are stored in this repository.</p>
 
 ## Reproducing the paper
 
-Run the notebooks in this order:
+<p align="justify">Run the notebooks in this order:</p>
 
 | Step | Notebook | Purpose | Approximate T4 runtime |
 |---:|---|---|---:|
@@ -183,11 +184,11 @@ Run the notebooks in this order:
 | 3 | [`03_monusac_conch_embeddings.ipynb`](notebooks/03_monusac_conch_embeddings.ipynb) | Build MoNuSAC crops and cache frozen CONCH embeddings | 1 h 25 min |
 | 4 | [`04_monusac_reliability.ipynb`](notebooks/04_monusac_reliability.ipynb) | MoNuSAC probe, calibration, geometry, open-set, stain, and organ-shift experiments | Minutes from cache; longer when re-embedding perturbed crops |
 
-Notebooks 2 and 4 consume the `.npz` caches produced by notebooks 1 and 3. Their paths follow Kaggle's attached-notebook-output layout, so update the glob patterns when running elsewhere. The committed notebooks retain their outputs, allowing the reported values to be inspected without downloading CONCH or rerunning the experiments.
+<p align="justify">Notebooks 2 and 4 consume the <code>.npz</code> caches produced by notebooks 1 and 3. Their paths follow Kaggle&#x27;s attached-notebook-output layout, so update the glob patterns when running elsewhere. The committed notebooks retain their outputs, allowing the reported values to be inspected without downloading CONCH or rerunning the experiments.</p>
 
 ### Paper-to-code map
 
-Cell indices below are zero-based and refer to the committed notebooks.
+<p align="justify">Cell indices below are zero-based and refer to the committed notebooks.</p>
 
 | Paper item | Notebook | Cell |
 |---|---|---:|
@@ -214,30 +215,33 @@ Cell indices below are zero-based and refer to the committed notebooks.
 
 ## Citation
 
-If this work is useful in your research, please cite:
+<p align="justify">If this work is useful in your research, please cite the <a href="https://papers.miccai.org/miccai-2026-sat/MI4MedFM_010.html">official MICCAI paper</a>:</p>
 
 ```bibtex
-@inproceedings{sibly2026reliability,
-  title     = {Which Reliability Signal to Trust? Output vs. Representation Space Uncertainty Under Distribution Shift in Pathology Foundation Models},
+@InProceedings{SibMd._Which_MICCAISAT2026,
   author    = {Sibly, Md. Noman Biswas and Shifat, Shadril Hassan and Ahmed, Md. Shakil and Morol, Md Kishor},
-  booktitle = {Mechanistic Interpretability for Medical Foundation Models (MI4MedFM), MICCAI 2026 Workshops},
-  year      = {2026}
+  title     = {{Which Reliability Signal to Trust? Output vs. Representation Space Uncertainty Under Distribution Shift in Pathology Foundation Models}},
+  booktitle = {Medical Image Computing and Computer Assisted Intervention -- MICCAI 2026 Workshops and Challenges},
+  year      = {2026},
+  publisher = {Springer Nature Switzerland},
+  volume    = {LNCS 17261},
+  url       = {https://papers.miccai.org/miccai-2026-sat/MI4MedFM_010.html}
 }
 ```
 
-The proceedings URL and final bibliographic fields will be added when they are assigned.
+<p align="justify">The MICCAI page has not yet assigned a DOI, month, or page range.</p>
 
 ## Contact
 
-For questions about the paper or code, contact:
+<p align="justify">For questions about the paper or code, contact:</p>
 
 - **Shadril Hassan Shifat**, Project Lead - [shadril.hassan@elitelab.ai](mailto:shadril.hassan@elitelab.ai)
 - **Md Kishor Morol**, Corresponding Author - [kishor@elitelab.ai](mailto:kishor@elitelab.ai)
 
 ## Acknowledgements
 
-This work uses the [CONCH](https://github.com/mahmoodlab/CONCH) pathology foundation model from the Mahmood Lab. CONCH is gated and distributed under its own licence, independently of this repository.
+<p align="justify">This work uses the <a href="https://github.com/mahmoodlab/CONCH">CONCH</a> pathology foundation model from the Mahmood Lab. CONCH is gated and distributed under its own licence, independently of this repository.</p>
 
 ## License
 
-The code in this repository is released under the [MIT License](LICENSE).
+<p align="justify">The code in this repository is released under the <a href="LICENSE">MIT License</a>.</p>
